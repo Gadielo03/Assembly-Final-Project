@@ -51,7 +51,27 @@ set_video_mode MACRO mode
 	mov al, mode
 	mov ah, 0
 	int 10h
-ENDM
+    ENDM
+
+print_char_in_pos_color MACRO row, col, char, color
+    positionate_cursor row, col
+    MOV ah, 09h
+    MOV al, char
+    MOV bl, color
+    MOV cx, 1
+    INT 10h
+    ENDM
+
+reset_video_attributes MACRO
+    MOV AX, 0600h
+    MOV BH, 07h    ; 07h = Light gray on black
+    MOV CX, 0000h  ; Upper left corner
+    MOV DX, 184Fh  ; Lower right corner
+    INT 10h
+    
+    cln_screen
+    positionate_cursor 0, 0
+    ENDM
 
 .MODEL SMALL
 .STACK 100H
@@ -74,12 +94,13 @@ ENDM
     color_gris_claro DB "7-Gris claro", '$'
     color_gris_oscuro DB "8-Gris oscuro", '$'
 
-
     color_petalos DB ?
     color_centro DB ?
     color_tallo DB ?
     color_fondo DB ?
 
+    col DB 0
+    row DB 0
 
 .CODE 
 inicio:
@@ -88,14 +109,39 @@ inicio:
     
     set_video_mode 03h
     cln_screen
+
+    
+
     print_menu Menu_Opcion1
     call validate_color
+    MOV color_petalos, AL
+
     print_menu Menu_Opcion2
     call validate_color
+    MOV color_centro, AL
+
     print_menu Menu_Opcion3
     call validate_color
+    MOV color_tallo, AL
+
     print_menu Menu_Opcion4
     call validate_color
+    MOV color_fondo,AL
+
+    cln_screen
+
+    call paint_background
+
+    call paint_screen
+    
+    MOV AH, 00h
+    INT 16h  
+
+    cln_screen
+
+    reset_video_attributes
+    
+
     jmp end_program
 
 show_color_menu PROC NEAR
@@ -126,5 +172,72 @@ color_validator_start:
     RET
 validate_color ENDP
 
+paint_screen PROC NEAR
+    ; Draw outer petals layer
+    print_char_in_pos_color 8, 38, 219, color_petalos
+    print_char_in_pos_color 16, 38, 219, color_petalos
+    print_char_in_pos_color 12, 34, 219, color_petalos
+    print_char_in_pos_color 12, 42, 219, color_petalos
+
+    ; Draw middle petals layer
+    print_char_in_pos_color 9, 37, 219, color_petalos
+    print_char_in_pos_color 9, 39, 219, color_petalos
+    print_char_in_pos_color 15, 37, 219, color_petalos
+    print_char_in_pos_color 15, 39, 219, color_petalos
+    print_char_in_pos_color 10, 36, 219, color_petalos
+    print_char_in_pos_color 10, 40, 219, color_petalos
+    print_char_in_pos_color 14, 36, 219, color_petalos
+    print_char_in_pos_color 14, 40, 219, color_petalos
+
+    ; Draw inner petals layer
+    print_char_in_pos_color 11, 36, 219, color_petalos
+    print_char_in_pos_color 11, 40, 219, color_petalos
+    print_char_in_pos_color 13, 36, 219, color_petalos
+    print_char_in_pos_color 13, 40, 219, color_petalos
+    print_char_in_pos_color 12, 35, 219, color_petalos
+    print_char_in_pos_color 12, 41, 219, color_petalos
+
+    ; Draw center (made bigger)
+    print_char_in_pos_color 12, 37, 219, color_centro
+    print_char_in_pos_color 12, 38, 219, color_centro
+    print_char_in_pos_color 12, 39, 219, color_centro
+    print_char_in_pos_color 11, 38, 219, color_centro
+    print_char_in_pos_color 13, 38, 219, color_centro
+
+    ; Draw stem and leaves (made longer)
+    print_char_in_pos_color 17, 38, 219, color_tallo
+    print_char_in_pos_color 18, 38, 219, color_tallo
+    print_char_in_pos_color 19, 38, 219, color_tallo
+    print_char_in_pos_color 20, 38, 219, color_tallo
+    print_char_in_pos_color 18, 37, 219, color_tallo
+    print_char_in_pos_color 18, 39, 219, color_tallo
+    print_char_in_pos_color 19, 36, 219, color_tallo
+    print_char_in_pos_color 19, 40, 219, color_tallo
+    RET
+paint_screen ENDP
+
+paint_background PROC NEAR
+    PUSH CX         ; Save CX register
+    MOV row, 0      ; Start from row 0
+row_loop:
+    MOV col, 0      ; Start from column 0
+col_loop:
+    MOV DH, row
+    MOV DL, col
+    print_char_in_pos_color DH, DL, 219, color_fondo
+    INC col
+    MOV DL, col
+    CMP DL, 80      ; Screen width (80 columns)
+    JL col_loop
+    INC row
+    MOV DH, row
+    CMP DH, 25      ; Screen height (25 rows)
+    JL row_loop
+    POP CX          ; Restore CX register
+    RET
+paint_background ENDP
+
 end_program:
-    end inicio
+    MOV AX, 4C00h
+    INT 21h
+end inicio
