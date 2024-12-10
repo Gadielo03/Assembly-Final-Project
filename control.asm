@@ -82,8 +82,8 @@ ENDM
     Menu_Left DB "S - Mover hacia la izquierda", '$'
     Menu_Right DB "D - Mover hacia la derecha", '$'
     Menu_Continue DB "Presiona <ENTER> para continuar", '$'
-    posX DB 30 
-    posY DB 15
+    posX DB 0 
+    posY DB 0
     pressedKey DB ?
 
 .CODE 
@@ -111,7 +111,7 @@ main_loop:
     ; Draw square in posX, posY
     MOV AH, [posY]
     MOV AL, [posX]
-    print_char_in_pos_color AH, AL, 219, 10
+    print_char_in_pos_color [posY], [posX], 219, 10
 
 
     ; Clear previous position
@@ -132,7 +132,7 @@ main_loop:
     ; cln_screen
     MOV AH, [posY]
     MOV AL, [posX]
-    print_char_in_pos AH, AL, ' '  ; Replace with a space to "erase" character
+    print_char_in_pos [posY], [posX], ' '  ; Replace with a space to "erase" character
     MOV AL, [pressedKey]
 
     ; Check key press
@@ -154,35 +154,27 @@ main_loop:
     JMP main_loop
 
 move_up:
-    MOV AL, [posY]
-    ; CMP AL, 1       ; Check upper boundary
-    ; JLE main_loop
-    DEC AL
-    MOV [posY], AL
+    CMP [posY], 1       ; Check upper boundary
+    JLE main_loop
+    DEC [posY]
     JMP main_loop
 
 move_down:
-    MOV AL, [posY]
-    ; CMP AL, 23      ; Check lower boundary
-    ; JGE main_loop
-    INC AL
-    MOV [posY], AL
+    CMP [posY], 23      ; Check lower boundary
+    JGE main_loop
+    INC [posY] 
     JMP main_loop
 
 move_left:
-    MOV AL, [posX]
-    ; CMP AL, 1       ; Check left boundary
-    ; JLE main_loop
-    DEC AL
-    MOV [posX], AL
+    CMP [posX], 1       ; Check left boundary
+    JLE main_loop
+    DEC [posX] 
     JMP main_loop
 
 move_right:
-    MOV AL, [posX]
-    ; CMP AL, 78      ; Check right boundary
-    ; JGE main_loop
-    INC AL
-    MOV [posX], AL
+    CMP [posX], 78      ; Check right boundary
+    JGE main_loop
+    INC [posX] 
     JMP main_loop
 
 
