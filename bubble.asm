@@ -12,6 +12,8 @@ y  dw ?
 xd dw ?
 yd dw ?
 
+public Programa_Burbuja
+Programa_Burbuja PROC NEAR
 start:
 	gx_set_video_mode_gx
 
@@ -104,6 +106,12 @@ yelse:
 
 exit:
 	gx_set_video_mode_txt
-	return 0
+	
+
+Programa_Burbuja ENDP
 
 end start
+
+
+
+END

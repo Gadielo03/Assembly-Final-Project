@@ -87,9 +87,10 @@ ENDM
     pressedKey DB ?
 
 .CODE 
-inicio:
-    MOV AX, @DATA
-    MOV DS, AX
+public Programa_Control
+
+Programa_Control PROC NEAR
+
 
     cln_screen
 
@@ -106,6 +107,7 @@ inicio:
     jmp main_loop
     ; print_char_in_pos_color 13, 36, 219, 10
 
+Programa_Control ENDP
 
 main_loop:
     ; Draw square in posX, posY
@@ -180,8 +182,7 @@ move_right:
 
 terminate:
     set_video_mode 03h
-    mov ah, 4Ch
-    int 21h
+    RET
 
 show_controls_menu PROC NEAR
     print_string_in_pos 1, 25, Menu_Title
@@ -195,4 +196,4 @@ show_controls_menu PROC NEAR
     RET
 show_controls_menu ENDP
 
-end inicio
+END
