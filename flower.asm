@@ -106,9 +106,9 @@ reset_video_attributes MACRO
     row DB 0
 
 .CODE 
-inicio:
-    MOV AX, @DATA
-    MOV DS, AX
+public Programa_Flor
+
+Programa_Flor PROC NEAR
     
     set_video_mode 03h
     cln_screen
@@ -143,9 +143,11 @@ inicio:
     cln_screen
 
     reset_video_attributes
-    
+    RET
 
     jmp end_program
+
+Programa_Flor ENDP
 
 show_color_menu PROC NEAR
     print_string_in_pos 2, 25, Menu_Decoracion
@@ -415,4 +417,5 @@ paint_background ENDP
 end_program:
     MOV AX, 4C00h
     INT 21h
-end inicio
+
+END
