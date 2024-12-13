@@ -59,9 +59,9 @@ ENDM
 
 reset_video_attributes MACRO
     MOV AX, 0600h
-    MOV BH, 07h    ; 07h = Light gray on black
-    MOV CX, 0000h  ; Upper left corner
-    MOV DX, 184Fh  ; Lower right corner
+    MOV BH, 07h    ; 07h = Gris claro sobre negro
+    MOV CX, 0000h  ; Esquina superior izquierda
+    MOV DX, 184Fh  ; Esquina inferior derecha
     INT 10h
     
     cln_screen
@@ -81,9 +81,10 @@ ENDM
     Menu_Down DB "A - Mover hacia abajo" , '$'
     Menu_Left DB "S - Mover hacia la izquierda", '$'
     Menu_Right DB "D - Mover hacia la derecha", '$'
-    Menu_Continue DB "Presiona <ENTER> para continuar", '$'
-    posX DB 0 
-    posY DB 0
+    Menu_Continue DB "Presione <ENTER> para continuar", '$'
+    Nota_Salir DB "NOTA: Para salir en cualquier momento, presione <ESC>", '$'
+    posX DB 10 
+    posY DB 10
     pressedKey DB ?
 
 .CODE 
@@ -91,10 +92,9 @@ public Programa_Control
 
 Programa_Control PROC NEAR
 
-
     cln_screen
 
-    ; This hides the cursor
+    ; Esto oculta el cursor
     mov ah, 01h
     mov cx, 2607h
     int 10h
@@ -110,34 +110,33 @@ Programa_Control PROC NEAR
 Programa_Control ENDP
 
 main_loop:
-    ; Draw square in posX, posY
+    ; Dibuja el cuadro en posX, posY
     MOV AH, [posY]
     MOV AL, [posX]
     print_char_in_pos_color [posY], [posX], 219, 10
 
-
-    ; Clear previous position
+    ; Limpia la posición anterior
     ; MOV AL, [posY]
     ; MOV AH, [posX]
     ; cln_screen
 
-    ; Sleep for 2048 microseconds
+    ; Espera por 2048 microsegundos
     ; MOV CX, 0000h
     ; MOV DX, 0580h
     ; MOV AH, 86H
     ; INT 15H
 
-    ; Read key
+    ; Lee la tecla presionada
     MOV AH, 00h
     INT 16h
     MOV [pressedKey], AL
     ; cln_screen
     MOV AH, [posY]
     MOV AL, [posX]
-    print_char_in_pos [posY], [posX], ' '  ; Replace with a space to "erase" character
+    print_char_in_pos [posY], [posX], ' '  ; Reemplaza con un espacio para "borrar" el carácter
     MOV AL, [pressedKey]
 
-    ; Check key press
+    ; Verifica la tecla presionada
     CMP AL, 'w';w
     JE move_up
 
@@ -147,7 +146,7 @@ main_loop:
     CMP AL, 73h;'s';s
     JE move_down
 
-    CMP AL, 'd';s
+    CMP AL, 'd';d
     JE move_right
 
     CMP AL, 1Bh;ESC
@@ -156,29 +155,28 @@ main_loop:
     JMP main_loop
 
 move_up:
-    CMP [posY], 1       ; Check upper boundary
+    CMP [posY], 1       ; Verifica el límite superior
     JLE main_loop
     DEC [posY]
     JMP main_loop
 
 move_down:
-    CMP [posY], 23      ; Check lower boundary
+    CMP [posY], 23      ; Verifica el límite inferior
     JGE main_loop
     INC [posY] 
     JMP main_loop
 
 move_left:
-    CMP [posX], 1       ; Check left boundary
+    CMP [posX], 1       ; Verifica el límite izquierdo
     JLE main_loop
     DEC [posX] 
     JMP main_loop
 
 move_right:
-    CMP [posX], 78      ; Check right boundary
+    CMP [posX], 78      ; Verifica el límite derecho
     JGE main_loop
     INC [posX] 
     JMP main_loop
-
 
 terminate:
     set_video_mode 03h
@@ -188,11 +186,12 @@ show_controls_menu PROC NEAR
     print_string_in_pos 1, 25, Menu_Title
     print_string_in_pos 2, 25, Menu_Decoracion
     print_string_in_pos 4, 35, Menu_Controles
-    print_string_in_pos 6, 25, Menu_Up 
-    print_string_in_pos 7, 25, Menu_Down
-    print_string_in_pos 8, 25, Menu_Left
-    print_string_in_pos 9, 25, Menu_Right
+    print_string_in_pos 6, 27, Menu_Up 
+    print_string_in_pos 7, 27, Menu_Down
+    print_string_in_pos 8, 27, Menu_Left
+    print_string_in_pos 9, 27, Menu_Right
     print_string_in_pos 11, 25, Menu_Continue
+    print_string_in_pos 13, 23, Nota_Salir 
     RET
 show_controls_menu ENDP
 

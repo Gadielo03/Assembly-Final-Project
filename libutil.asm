@@ -1,37 +1,37 @@
-; Move data from a variable into another variable
+; Mueve datos de una variable a otra variable
 movv macro to, from
   push from
   pop to
 endm
 
-; Compare two memory variables
+; Compara dos variables de memoria
 cmpv macro var1, var2, register
   mov register, var1
   cmp register, var2
 endm
 
-; Add two memory variables
+; Suma dos variables de memoria
 addv macro to, from, register
   mov register, to
   add register, from
   mov to, register
 endm
 
-; Subtract two memory variables
+; Resta dos variables de memoria
 subv macro to, from, register
   mov register, to
   sub register, from
   mov to, register
 endm
 
-; Return Control to DOS
+; Devuelve el control al DOS
 return macro code
   mov ah, 4ch
   mov al, code
   int 21h
 endm
 
-; Save registers to stack
+; Guarda registros en la pila
 save_registers macro
   push ax
   push bx
@@ -39,7 +39,7 @@ save_registers macro
   push dx
 endm
 
-; Restore registers from stack
+; Restaura registros desde la pila
 restore_registers macro
   pop dx
   pop cx
@@ -47,16 +47,16 @@ restore_registers macro
   pop ax
 endm
 
-; Checks for a keypress; Sets ZF if no keypress is available
-; Otherwise returns it's scan code into AH and it's ASCII into al
-; Removes the charecter from the Type Ahead Buffer { USING AX }
+; Verifica si hay una tecla presionada; Establece ZF si no hay tecla disponible
+; De lo contrario, devuelve su código de escaneo en AH y su ASCII en AL
+; Elimina el carácter del "Type Ahead Buffer" { USANDO AX }
 check_keypress:
-  mov ah, 1     ; Checks if there is a character in the type ahead buffer
-  int 16h       ; MS-DOS BIOS Keyboard Services Interrupt
+  mov ah, 1     ; Verifica si hay un carácter en el "Type Ahead Buffer"
+  int 16h       ; Interrupción de servicios de teclado BIOS de MS-DOS
   jz check_keypress_empty
   mov ah, 0
   int 16h
   ret
 check_keypress_empty:
-  cmp ax, ax    ; Explicitly sets the ZF
+  cmp ax, ax    ; Establece explícitamente el ZF
   ret

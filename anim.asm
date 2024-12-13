@@ -11,34 +11,36 @@ x  dw ?
 y  dw ?
 xd dw ?
 yd dw ?
+msg db "Presiona <ESC> para salir"
 
 public Programa_Burbuja
 Programa_Burbuja PROC NEAR
 start:
 	gx_set_video_mode_gx
 
-	; Initialize program
-	mov x, 270	; Center at 150
-	mov y, 30	; Center at 90
-	mov xd, 1   ; Initial X direction is negative
-	mov yd, 0   ; Initial Y direction is positive
+	; Inicializa el programa
+	mov x, 270	; Centro en 150
+	mov y, 30	; Centro en 90
+	mov xd, 1   ; La dirección inicial en X es negativa
+	mov yd, 0   ; La dirección inicial en Y es positiva
 	mov gx_color, 32
 
 mainloop:
-	; Check if ESCAPE key is pressed
+	; Verifica si se presionó la tecla ESCAPE
 	call check_keypress
-	jz draw 	; No keypress available
-	cmp al, 27 	; Check if ASCII code of key is 27 (ESC)
-	je exit		; If so exit the program
+	jz draw 	; No hay tecla presionada
+	cmp al, 27 	; Verifica si el código ASCII de la tecla es 27 (ESC)
+	je exit		; Si es así, salir del programa
 
 draw:
-	; Clear the previous square
-	mov dh, gx_color ; Temporary storing the original color
+
+	; Limpia el cuadro anterior
+	mov dh, gx_color ; Almacena temporalmente el color original
 	push dx
 	mov gx_color, 17
 	call gx_rect
 	pop dx
-	mov gx_color, dh ; Restoring the original color
+	mov gx_color, dh ; Restaura el color original
 
 	movv gx_x1, x
 	movv gx_y1, y
@@ -48,13 +50,13 @@ draw:
 	add gx_y2, 20
 	call gx_rect
 
-	; Sleep for 2048 microseconds
+	; Pausa por 2048 microsegundos
 	mov     cx, 00000h
 	mov     dx, 05800h
 	mov     ah, 86H
 	int     15H
 
-	; Change X Direction
+	; Cambia la dirección en X
 	cmp x, 300
 	jge	setxdec
 	jmp setxdecelse
@@ -69,7 +71,7 @@ setxinc:
 	mov xd, 0
 setxincelse:
 
-	; Change Y Direction
+	; Cambia la dirección en Y
 	cmp y, 180
 	jge	setydec
 	jmp setydecelse
@@ -84,7 +86,7 @@ setyinc:
 	mov yd, 0
 setyincelse:
 
-	; Increment or Decrement X based on X Direction
+	; Incrementa o decrementa X según la dirección en X
 	cmp xd, 1
 	je xdec
 	inc x
@@ -93,7 +95,7 @@ xdec:
 	dec x
 xelse:
 
-	; Increment or Decrement Y based on Y Direction
+	; Incrementa o decrementa Y según la dirección en Y
 	cmp yd, 1
 	je ydec
 	inc y
@@ -106,7 +108,8 @@ yelse:
 
 exit:
 	gx_set_video_mode_txt
-	
+	ret
+
 
 Programa_Burbuja ENDP
 
