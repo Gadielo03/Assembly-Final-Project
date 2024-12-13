@@ -45,13 +45,21 @@ cln_screen MACRO
 .STACK 100H
 
 .DATA
+    ;Variables para la presentacion;
+    Integrante_Uno DB "Gadiel Alejandro Fraire Ramírez - 22130542", '$'
+    Integrante_Dos DB "Gerardo Enrique Ramos Espinoza - 21130599", '$'
+    Presentan DB "Presentan: ", '$'
+    Nombre_Programa DB "MODOS DE VIDEO Y GRÁFICOS", '$'
+    Prompt_Presentacion DB "Presione cualquier tecla para continuar...", '$'
+
+    ;Variables para menu de opciones;
     Menu_Decoracion DB "==================================",  '$'
     Menu_Titulo DB  "MENU PRINCIPAL",  '$'
     Menu_Opcion1 DB  "1. COLOREA TU FLOR",  '$'
     Menu_Opcion2 DB  "2. CONTROLA TU PERSONAJE",  '$'
-    Menu_Opcion3 DB  "3. Opcion 3",  '$'
-    Menu_Opcion4 DB  "4. Salir Del Programa",  '$'
-    Seleccion_Opcion DB  "Selecciprint_string_in_pos 8, 1, opcionone una opcion: ", '$'
+    Menu_Opcion3 DB  "3. ANIMACIÓN (<ESC> para salir)",  '$'
+    Menu_Opcion4 DB  "4. SALIR",  '$'
+    Seleccion_Opcion DB  "Seleccine una opcion: ", '$'
 
     opcion DB 0
 
@@ -64,20 +72,32 @@ inicio:
     MOV DS, AX
 
     cln_screen
+    print_string_in_pos 1, 25, Menu_Decoracion
+    print_string_in_pos 3, 23, Integrante_Uno 
+    print_string_in_pos 4, 25, Integrante_Dos 
+    print_string_in_pos 6, 35, Presentan
+    print_string_in_pos 7, 30, Nombre_Programa 
+    print_string_in_pos 9, 25, Menu_Decoracion
+    print_string_in_pos 10, 23, Prompt_Presentacion 
+
+    read_char
+
+menu_opciones:
+    cln_screen
 
     print_string_in_pos 1, 25, Menu_Decoracion
-    print_string_in_pos 2, 25, Menu_Titulo
-    print_string_in_pos 3, 25, Menu_Opcion1
-    print_string_in_pos 4, 25, Menu_Opcion2
-    print_string_in_pos 5, 25, Menu_Opcion3
-    print_string_in_pos 6, 25, Menu_Opcion4
-    print_string_in_pos 7, 25, Menu_Decoracion
-    print_string_in_pos 8, 25, Seleccion_Opcion
+    print_string_in_pos 2, 35, Menu_Titulo
+    print_string_in_pos 4, 30, Menu_Opcion1
+    print_string_in_pos 5, 30, Menu_Opcion2
+    print_string_in_pos 6, 30, Menu_Opcion3
+    print_string_in_pos 7, 30, Menu_Opcion4
+    print_string_in_pos 8, 25, Menu_Decoracion
+    print_string_in_pos 9, 25, Seleccion_Opcion
     
     
     call validate_option
 
-    jmp inicio
+    jmp menu_opciones
 
 
     MOV AH, 4CH
@@ -99,17 +119,17 @@ validate_option PROC NEAR
     JMP validate_option
 opcion1:
     call Programa_Flor
-    jmp inicio
+    jmp menu_opciones
     
     
 opcion2:
     call Programa_Control
-    jmp inicio
+    jmp menu_opciones
     
     
 opcion3:
     call Programa_Burbuja
-    jmp inicio
+    jmp menu_opciones
 
 opcion4:
     cln_screen

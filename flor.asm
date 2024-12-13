@@ -394,28 +394,28 @@ paint_screen PROC NEAR
 paint_screen ENDP
 
 paint_background PROC NEAR
-    PUSH CX         ; Save CX register
-    MOV row, 0      ; Start from row 0
+    PUSH CX         ; Guarda el registro CX
+    MOV row, 0      ; Comienza desde la fila 0
 row_loop:
-    MOV col, 0      ; Start from column 0
+    MOV col, 0      ; Comienza desde la columna 0
 col_loop:
-    MOV DH, row
-    MOV DL, col
-    print_char_in_pos_color DH, DL, 219, color_fondo
-    INC col
-    MOV DL, col
-    CMP DL, 80      ; Screen width (80 columns)
-    JL col_loop
-    INC row
-    MOV DH, row
-    CMP DH, 25      ; Screen height (25 rows)
-    JL row_loop
-    POP CX          ; Restore CX register
-    RET
+    MOV DH, row     ; Establece la fila actual
+    MOV DL, col     ; Establece la columna actual
+    print_char_in_pos_color DH, DL, 219, color_fondo ; Imprime un carácter de fondo con el color especificado
+    INC col         ; Incrementa la columna
+    MOV DL, col     ; Actualiza DL con el valor de la nueva columna
+    CMP DL, 80      ; Compara la columna actual con el ancho de la pantalla (80 columnas)
+    JL col_loop     ; Si la columna es menor a 80, repite el bucle de columnas
+    INC row         ; Incrementa la fila
+    MOV DH, row     ; Actualiza DH con el valor de la nueva fila
+    CMP DH, 25      ; Compara la fila actual con la altura de la pantalla (25 filas)
+    JL row_loop     ; Si la fila es menor a 25, repite el bucle de filas
+    POP CX          ; Restaura el registro CX
+    RET             ; Regresa del procedimiento
 paint_background ENDP
 
 end_program:
-    MOV AX, 4C00h
-    INT 21h
+    MOV AX, 4C00h   ; Código para finalizar el programa correctamente
+    INT 21h         ; Llama a la interrupción del sistema para terminar el programa
 
 END

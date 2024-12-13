@@ -11,38 +11,38 @@ gx_dy     dw ?
 gx_m      dw ?
 gx_color  db ?
 
-; sets Video Mode
+; establece el modo de video
 gx_set_video_mode macro mode
   mov al, mode
   mov ah, 0
   int 10h
 endm
 
-; address of Video memory
+; dirección de la memoria de video
 GX_START_ADDR dw 0a000h
 
-; sets videwo mode to 320x200 256 color graphics (MCGA,VGA)
-; { Uses ES }
+; establece el modo de video a gráficos de 320x200 con 256 colores (MCGA, VGA)
+; { Usa ES }
 gx_set_video_mode_gx macro
   gx_set_video_mode 13h
   mov es, GX_START_ADDR
 endm
 
-; sets video mode to 80x25 Monochrome text (default) (MDA,HERC,EGA,VGA)
+; establece el modo de video a texto monocromático de 80x25 (predeterminado) (MDA, HERC, EGA, VGA)
 gx_set_video_mode_txt macro
   gx_set_video_mode 03h
 endm
 
-; Sets a pixel using the BIOS int10h API { Uses AX, CX, DX }
+; establece un píxel usando la API de BIOS int10h { Usa AX, CX, DX }
 gx_pixel_bios macro x, y, color
-  mov ah, 0CH     ; set graphics pixel DOS function
-  mov al, color   ; al stores the color
-  mov cx, x       ; cx stores the x coordinate
-  mov dx, y       ; dx stores the y coordinare
-  int 10h         ; interrupt
+  mov ah, 0CH     ; función DOS para establecer píxel gráfico
+  mov al, color   ; al almacena el color
+  mov cx, x       ; cx almacena la coordenada x
+  mov dx, y       ; dx almacena la coordenada y
+  int 10h         ; interrupción
 endm
 
-; Sets a pixel using Video Memory { Uses AX, BX, DI, Video Memory }
+; establece un píxel usando la memoria de video { Usa AX, BX, DI, Memoria de Video }
 gx_pixel macro x, y, color
   mov ax, y
   mov bx, 320
@@ -53,7 +53,7 @@ gx_pixel macro x, y, color
   mov es:[di], al
 endm
 
-; Draws a rectangle between (gx_x1;gx_y1) and (gx_x2;gx_y2) { Uses AX, BX, DI, Video Memory }
+; dibuja un rectángulo entre (gx_x1; gx_y1) y (gx_x2; gx_y2) { Usa AX, BX, DI, Memoria de Video }
 gx_rect:
   movv gx_y, gx_y1
 gx_rect_v:
